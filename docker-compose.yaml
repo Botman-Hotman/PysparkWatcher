@@ -1,0 +1,93 @@
+version: '4'
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: psg01
+    restart: always
+    environment:
+      POSTGRES_USER: dev-user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dev_db
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "postgres", "-p", "5432", "-U", "dev-user", "-d", "dev_db"]
+      interval: 10s
+      retries: 3
+    networks:
+      - ArqivaTest
+    # Uncomment to persist database
+    #    volumes:
+    #      - postgres-data:/var/lib/postgresql/data
+
+  app:
+    container_name: app
+    build: .
+    # Uncomment to persist database
+#    volumes:
+#      - app-data:/app
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:  python main.py --watch 'imports'
+    networks:
+      - ArqivaTest
+
+  spark-master:
+    container_name: da-spark-master
+    build: .
+    image: da-spark-image
+    entrypoint: [ './entrypoint.sh', 'master' ]
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9090" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - ./book_data:/opt/spark/data
+      - ./spark_apps:/opt/spark/apps
+      - spark-logs:/opt/spark/spark-events
+    env_file:
+      - .env.spark
+    ports:
+      - '9090:9090'
+      - '7077:7077'
+
+
+  spark-history-server:
+      container_name: da-spark-history
+      image: da-spark-image
+      entrypoint: [ './entrypoint.sh', 'history' ]
+      depends_on:
+        - spark-master
+      env_file:
+        - .env.spark
+      volumes:
+        - spark-logs:/opt/spark/spark-events
+      ports:
+        - '18080:18080'
+
+  spark-worker:
+      #    container_name: da-spark-worker
+      image: da-spark-image
+      entrypoint: [ './entrypoint.sh', 'worker' ]
+      depends_on:
+        - spark-master
+      env_file:
+        - .env.spark
+      volumes:
+        - ./book_data:/opt/spark/data
+        - ./spark_apps:/opt/spark/apps
+        - spark-logs:/opt/spark/spark-events
+
+networks:
+    ArqivaTest:
+
+# Uncomment to persist database
+volumes:
+  spark-logs:
+#  postgres-data:
+#  app-data
