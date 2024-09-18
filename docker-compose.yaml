@@ -38,30 +38,30 @@ services:
 #    networks:
 #      - ArqivaTest
 
-  spark-master:
-    build: .
-    container_name: spark-master
-    ports:
-      - "8080:8080"  # Spark Master UI
-      - "7077:7077"  # Spark Master Port
-    environment:
-      - SPARK_MODE=master
-    networks:
-      - ArqivaTest
-
-  spark-worker:
-      build: .
-      container_name: spark-worker
-      depends_on:
-        - spark-master
-      environment:
-        - SPARK_MODE=worker
-        - SPARK_MASTER=spark://spark-master:7077
-      networks:
-        - ArqivaTest
-      ports:
-        - "8081:8081"  # Spark Worker UI
-
+#  spark-master:
+#    build: .
+#    container_name: spark-master
+#    ports:
+#      - "8080:8080"  # Spark Master UI
+#      - "7077:7077"  # Spark Master Port
+#    environment:
+#      - SPARK_MODE=master
+#    networks:
+#      - ArqivaTest
+#
+#  spark-worker:
+#      build: .
+#      container_name: spark-worker
+#      depends_on:
+#        - spark-master
+#      environment:
+#        - SPARK_MODE=worker
+#        - SPARK_MASTER=spark://spark-master:7077
+#      networks:
+#        - ArqivaTest
+#      ports:
+#        - "8081:8081"  # Spark Worker UI
+#
 
 networks:
     ArqivaTest:

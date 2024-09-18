@@ -82,9 +82,10 @@ sync_session_factory = sessionmaker(
 )
 
 # Used for testing
-async def create_all_schema(connection: AsyncConnection):
-    await connection.run_sync(Base.metadata.create_all)
+async def create_all_schema():
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
-
-async def drop_all_schema(connection: AsyncConnection):
-    await connection.run_sync(Base.metadata.drop_all)
+async def drop_all_schema():
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
