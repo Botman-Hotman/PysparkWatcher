@@ -22,69 +22,50 @@ services:
     #    volumes:
     #      - postgres-data:/var/lib/postgresql/data
 
-  app:
-    container_name: app
+#  app:
+#    container_name: app
+#    build: .
+#    # Uncomment to persist database
+##    volumes:
+##      - app-data:/app
+#    restart: always
+#    depends_on:
+#      spark-master
+#      spark-worker
+#      postgres:
+#        condition: service_healthy
+#    command:  python main.py --watch 'imports'
+#    networks:
+#      - ArqivaTest
+
+  spark-master:
     build: .
-    # Uncomment to persist database
-#    volumes:
-#      - app-data:/app
-    restart: always
-    depends_on:
-      postgres:
-        condition: service_healthy
-    command:  python main.py --watch 'imports'
+    container_name: spark-master
+    ports:
+      - "8080:8080"  # Spark Master UI
+      - "7077:7077"  # Spark Master Port
+    environment:
+      - SPARK_MODE=master
     networks:
       - ArqivaTest
 
-  spark-master:
-    container_name: da-spark-master
-    build: .
-    image: da-spark-image
-    entrypoint: [ './entrypoint.sh', 'master' ]
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9090" ]
-      interval: 5s
-      timeout: 3s
-      retries: 3
-    volumes:
-      - ./book_data:/opt/spark/data
-      - ./spark_apps:/opt/spark/apps
-      - spark-logs:/opt/spark/spark-events
-    env_file:
-      - .env.spark
-    ports:
-      - '9090:9090'
-      - '7077:7077'
-
-
-  spark-history-server:
-      container_name: da-spark-history
-      image: da-spark-image
-      entrypoint: [ './entrypoint.sh', 'history' ]
-      depends_on:
-        - spark-master
-      env_file:
-        - .env.spark
-      volumes:
-        - spark-logs:/opt/spark/spark-events
-      ports:
-        - '18080:18080'
-
   spark-worker:
-      #    container_name: da-spark-worker
-      image: da-spark-image
-      entrypoint: [ './entrypoint.sh', 'worker' ]
+      build: .
+      container_name: spark-worker
       depends_on:
         - spark-master
-      env_file:
-        - .env.spark
-      volumes:
-        - ./book_data:/opt/spark/data
-        - ./spark_apps:/opt/spark/apps
-        - spark-logs:/opt/spark/spark-events
+      environment:
+        - SPARK_MODE=worker
+        - SPARK_MASTER=spark://spark-master:7077
+      networks:
+        - ArqivaTest
+      ports:
+        - "8081:8081"  # Spark Worker UI
+
 
 networks:
     ArqivaTest:
+      driver: bridge
 
 # Uncomment to persist database
 volumes:

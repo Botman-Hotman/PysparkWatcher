@@ -8,6 +8,13 @@ ipython = "*"
 pandas = "*"
 pyarrow = "*"
 numpy = "*"
+sqlalchemy = "*"
+python-dotenv = "*"
+pydantic-settings = "*"
+watchdog = "*"
+psycopg2 = "*"
+asyncpg = "*"
+pyspark = "*"
 
 [dev-packages]
 
