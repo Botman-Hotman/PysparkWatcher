@@ -1,8 +1,9 @@
+import datetime
+import uuid
 from dataclasses import dataclass
+
 from sqlalchemy import Column, UUID, ForeignKey, Float, Date
 from sqlalchemy.orm import relationship
-import uuid
-import datetime
 
 from core.db import Base, settings
 

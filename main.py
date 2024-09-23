@@ -1,12 +1,11 @@
 import argparse
 import asyncio
+import logging
+from logging.handlers import RotatingFileHandler
 
 from core.config import settings, spark_settings
-from logging.handlers import RotatingFileHandler
-from core.db import async_session_factory, async_engine, drop_all_schema, create_all_schema
+from core.db import async_session_factory, drop_all_schema, create_all_schema
 from services.directory_watcher import watch_folder
-import logging
-
 from services.schema_init import SchemaInit, populate_dimensions_on_startup
 
 logging.basicConfig(

@@ -1,9 +1,10 @@
 import logging
+from typing import List, Type
 
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import text
-from typing import List, Type
+
 from core.db import Base
 
 

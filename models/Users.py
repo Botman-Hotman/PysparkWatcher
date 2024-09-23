@@ -1,8 +1,8 @@
-from dataclasses import dataclass
-from sqlalchemy import Column, String, UUID, Date
-
-import uuid
 import datetime
+import uuid
+from dataclasses import dataclass
+
+from sqlalchemy import Column, String, UUID, Date
 
 from core.db import Base, settings
 

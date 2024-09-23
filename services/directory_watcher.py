@@ -1,12 +1,12 @@
 import asyncio
-import os
 import logging
+import os
 import time
-from asyncio import AbstractEventLoop, Future
+from asyncio import AbstractEventLoop
 
-from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-
+from watchdog.observers import Observer
+from pipeline.csv_processor import csv_processor
 
 
 class WatcherHandler(FileSystemEventHandler):
@@ -24,16 +24,9 @@ class WatcherHandler(FileSystemEventHandler):
             if event.src_path.endswith('.csv'):
                 logging.info(f"Detected new CSV file: {os.path.basename(event.src_path)}")
                 time.sleep(2)
+                csv_processor(event.src_path)
 
-                print('DONE')
-                # future: Future = asyncio.run_coroutine_threadsafe(
-                #     import_data_to_staging(event.src_path), self.loop
-                # )
-                #
-                # try:
-                #     result = future.result()
-                # except Exception as e:
-                #     logging.exception(f"Error scheduling task: {e}")
+            # TODO: can extend for other flat files
 
             # TODO: optional to create process to zip and backup item before deletion
             os.remove(event.src_path)

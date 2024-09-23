@@ -1,15 +1,15 @@
 import json
-import pandas as pd
 
-from .config import settings
+import pandas as pd
+from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
-    AsyncConnection,
     create_async_engine,
     AsyncEngine,
 )
 from sqlalchemy.orm import declarative_base, sessionmaker
-from sqlalchemy import create_engine
+
+from .config import settings
 
 
 class MyBase:
