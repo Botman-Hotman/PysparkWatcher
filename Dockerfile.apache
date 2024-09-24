@@ -1,5 +1,6 @@
 # Dockerfile
 FROM openjdk:8-jdk
+LABEL authors="Botman-Hotman"
 
 # Set environment variables for Spark and Hadoop
 ENV SPARK_VERSION=3.4.0 \
@@ -23,9 +24,16 @@ ENV PATH=$SPARK_HOME/bin:$PATH
 # Expose Spark ports
 EXPOSE 8080 7077 6066 8081
 
+# Creates a non-root user
+RUN adduser -u 5678 --disabled-password --gecos "" appuser
+
 # Copy entrypoint script to the container
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+RUN chown -R appuser /opt/spark
+
+# Switch to the non-root user
+USER appuser
 
 # Set entrypoint
 ENTRYPOINT ["/entrypoint.sh"]

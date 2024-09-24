@@ -1,4 +1,4 @@
-version: '4'
+version: '3.8'
 services:
   postgres:
     image: postgres:15-alpine
@@ -18,28 +18,11 @@ services:
       retries: 3
     networks:
       - ArqivaTest
-    # Uncomment to persist database
-    #    volumes:
-    #      - postgres-data:/var/lib/postgresql/data
-
-#  app:
-#    container_name: app
-#    build: .
-#    # Uncomment to persist database
-##    volumes:
-##      - app-data:/app
-#    restart: always
-#    depends_on:
-#      spark-master
-#      spark-worker
-#      postgres:
-#        condition: service_healthy
-#    command:  python main.py --watch 'imports'
-#    networks:
-#      - ArqivaTest
 
   spark-master:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.apache
     container_name: spark-master
     ports:
       - "8080:8080"  # Spark Master UI
@@ -48,27 +31,47 @@ services:
       - SPARK_MODE=master
     networks:
       - ArqivaTest
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:8080"]
+      interval: 10s
+      retries: 3
 
   spark-worker:
-      build: .
-      container_name: spark-worker
-      depends_on:
-        - spark-master
-      environment:
-        - SPARK_MODE=worker
-        - SPARK_MASTER=spark://spark-master:7077
-      networks:
-        - ArqivaTest
-      ports:
-        - "8081:8081"  # Spark Worker UI
+    build:
+      context: .
+      dockerfile: Dockerfile.apache
+    container_name: spark-worker
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER=spark://spark-master:7077
+    networks:
+      - ArqivaTest
+    ports:
+      - "8081:8081"  # Spark Worker UI
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:8081"]
+      interval: 10s
+      retries: 3
 
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    command: python main.py --watch 'imports'
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      spark-master:
+        condition: service_healthy
+      spark-worker:
+        condition: service_healthy
+    networks:
+      - ArqivaTest
 
 networks:
     ArqivaTest:
       driver: bridge
-
-# Uncomment to persist database
-volumes:
-  spark-logs:
-#  postgres-data:
-#  app-data
