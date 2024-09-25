@@ -1,12 +1,10 @@
 # Dockerfile
-FROM openjdk:8-jdk
+FROM openjdk:11-jdk-slim
 LABEL authors="Botman-Hotman"
 
 # Set environment variables for Spark and Hadoop
 ENV SPARK_VERSION=3.4.0 \
-    HADOOP_VERSION=3 \
-    PYSPARK_PYTHON=python3 \
-    PYSPARK_DRIVER_PYTHON=python3
+    HADOOP_VERSION=3
 
 # Install necessary tools and Python
 RUN apt-get update && \
@@ -22,15 +20,16 @@ ENV SPARK_HOME=/opt/spark
 ENV PATH=$SPARK_HOME/bin:$PATH
 
 # Expose Spark ports
-EXPOSE 8080 7077 6066 8081
+EXPOSE 8080 7077 8081 4040
 
-# Creates a non-root user
-RUN adduser -u 5678 --disabled-password --gecos "" appuser
+# Create a group and user with the same GID and UID
+RUN groupadd -g 5678 appgroup && \
+    useradd -u 5678 -g appgroup --no-log-init -m appuser
 
 # Copy entrypoint script to the container
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-RUN chown -R appuser /opt/spark
+RUN chown -R appuser:appgroup /opt/spark
 
 # Switch to the non-root user
 USER appuser

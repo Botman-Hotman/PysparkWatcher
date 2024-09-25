@@ -5,6 +5,7 @@ from core.spark import spark
 
 
 def csv_processor(directory: str):
+    logging.info(f'processing {directory}')
     file_name = os.path.basename(directory)
     df_new = spark.read.csv(
         directory,
@@ -13,7 +14,7 @@ def csv_processor(directory: str):
     )
 
     if df_new.count() > 0:
-        logging.debug(f"{df_new.count()} rows found for {file_name}")
+        logging.info(f"{df_new.count()} rows found for {file_name}")
         # jdbc_url = "jdbc:postgresql://your_postgres_host:your_postgres_port/your_database"
         # db_properties = {
         #     "user": "your_username",

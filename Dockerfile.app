@@ -31,8 +31,18 @@ RUN pip install pipenv && pipenv install --system --deploy
 # Create the logs directory and set permissions
 RUN mkdir -p /app/logs && chmod 777 /app/logs
 
-# Creates a non-root user and adds permission to access the /app folder
-RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
+# Create a group and user with the same GID and UID
+RUN groupadd -g 5678 appgroup && \
+    useradd -u 5678 -g appgroup --no-log-init -m appuser && \
+    chown -R appuser:appgroup /app
+
+COPY entrypoint_permissions.sh /entrypoint_permissions.sh
+RUN chmod +x /entrypoint_permissions.sh
 
 # Switch to the non-root user
 USER appuser
+
+# Set entrypoint
+ENTRYPOINT ["/entrypoint_permissions.sh"]
+
+CMD ["python", "main.py", "--watch", "imports"]

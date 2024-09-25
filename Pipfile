@@ -13,8 +13,8 @@ python-dotenv = "*"
 pydantic-settings = "*"
 watchdog = "*"
 asyncpg = "*"
-pyspark = "*"
 psycopg2-binary = "*"
+pyspark = "==3.4.0"
 
 [dev-packages]
 psycopg2 = "*"

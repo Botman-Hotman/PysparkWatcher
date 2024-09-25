@@ -62,7 +62,17 @@ $ `docker-compose up -d`
 ### check that the images are up
 $ `docker ps`
 
+![Alt text](img/watcher.png?raw=true "expected start")
+
 We make the assumption that a job will push the flat files into the import folder. The below command simulates a new file entering the directory.
 The target files are in example_data. The container is named **'app'** as defined in the docker-compose file.
 
-$ `docker cp example_data/* app:app/imports`
+$ `docker cp example_data/. app:app/imports`
+
+
+
+
+# Challenges Faced
+The biggest issue I found with this was getting all the micro services to talk to each other with permissions and shared volumes. 
+Also using the correct base image version of Java is important to align with the target version of spark, thank god for LLM's to parse error messages.
+

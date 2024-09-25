@@ -7,3 +7,5 @@ spark: SparkSession = (SparkSession.builder
                        .master(spark_settings.master)
                        .getOrCreate()
                        )
+
+# spark.sparkContext.setLogLevel("DEBUG")

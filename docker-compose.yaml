@@ -19,6 +19,7 @@ services:
     networks:
       - ArqivaTest
 
+
   spark-master:
     build:
       context: .
@@ -27,6 +28,7 @@ services:
     ports:
       - "8080:8080"  # Spark Master UI
       - "7077:7077"  # Spark Master Port
+      - "4040:4040"
     environment:
       - SPARK_MODE=master
     networks:
@@ -35,6 +37,9 @@ services:
       test: ["CMD", "curl", "http://localhost:8080"]
       interval: 10s
       retries: 3
+    volumes:
+      - shared-data:/app/imports  # Mount named volume at /app/imports
+    user: "appuser:appgroup"
 
   spark-worker:
     build:
@@ -54,6 +59,9 @@ services:
       test: ["CMD", "curl", "http://localhost:8081"]
       interval: 10s
       retries: 3
+    volumes:
+      - shared-data:/app/imports  # Mount named volume at /app/imports
+    user: "appuser:appgroup"
 
   app:
     container_name: app
@@ -71,7 +79,13 @@ services:
         condition: service_healthy
     networks:
       - ArqivaTest
+    volumes:
+      - shared-data:/app/imports  # Mount named volume at /app/imports
+    user: "appuser:appgroup"
 
 networks:
     ArqivaTest:
       driver: bridge
+
+volumes:
+  shared-data:
