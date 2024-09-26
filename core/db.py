@@ -66,7 +66,6 @@ async_session_factory = sessionmaker(
     expire_on_commit=False,  # Recommended for async to prevent object expiration after commit
 )
 
-
 sync_engine = create_engine(
     settings.db_string,
     echo=settings.echo_sql,  # Useful for logging SQL queries
@@ -81,10 +80,12 @@ sync_session_factory = sessionmaker(
     expire_on_commit=False
 )
 
+
 # Used for testing
 async def create_all_schema():
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
 
 async def drop_all_schema():
     async with async_engine.begin() as conn:

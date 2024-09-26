@@ -6,7 +6,7 @@ from asyncio import AbstractEventLoop
 
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
-from pipeline.csv_processor import csv_processor
+from pipeline.ingestion_layer import ingest_csv_files
 
 
 class WatcherHandler(FileSystemEventHandler):
@@ -23,8 +23,8 @@ class WatcherHandler(FileSystemEventHandler):
         if not event.is_directory:
             if event.src_path.endswith('.csv'):
                 logging.info(f"Detected new CSV file: {os.path.basename(event.src_path)}")
-                time.sleep(2)
-                csv_processor(event.src_path)
+                time.sleep(3)   # small delay to allow the file to write to disk correctly
+                ingest_csv_files(event.src_path)
 
             # TODO: can extend for other flat files
 

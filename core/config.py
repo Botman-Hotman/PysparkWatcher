@@ -22,6 +22,13 @@ class Settings(BaseSettings):
 class SparkSettings(BaseSettings):
     app_name: str = str(os.environ.get('app_name'))
     master: str = str(os.environ.get('master'))
+    spark_log_level: str = str(os.environ.get('spark_log_level'))
+    jdbc_url: str = f"{os.environ.get('jdbc_database')}{os.environ.get('db_url')}/{os.environ.get('db_name')}"
+    connection_properties: dict = {
+        "user":  str(os.environ.get('db_user')),
+        "password": str(os.environ.get('db_password')),
+        "driver": str(os.environ.get('driver_type'))
+    }
 
 
 settings = Settings()

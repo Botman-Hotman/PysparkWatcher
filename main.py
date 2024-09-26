@@ -14,7 +14,7 @@ logging.basicConfig(
     , handlers=[
         RotatingFileHandler(
             filename=f"logs/{spark_settings.app_name}.log",
-            maxBytes=10 * 1024 * 1024,  # 100 MB per file,
+            maxBytes=10 * 1024 * 1024,  # 10 MB per file,
             backupCount=7  # keep 7 backups
         ),
         logging.StreamHandler()  # Continue to log to the console as well
@@ -36,6 +36,7 @@ async def init_database():
         if settings.dev:
             logging.info("Dropping all schemas for dev environment.")
             await drop_all_schema()  # drop the schema for dev work
+
         logging.info("Creating all schemas.")
         await create_all_schema()
 
