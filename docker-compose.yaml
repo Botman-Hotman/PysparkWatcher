@@ -20,75 +20,75 @@ services:
       - ArqivaTest
 
 
-#  spark-master:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile.apache
-#    container_name: spark-master
-#    ports:
-#      - "8080:8080"  # Spark Master UI
-#      - "7077:7077"  # Spark Master Port
-#      - "4040:4040"
-#    environment:
-#      - SPARK_MODE=master
-#    networks:
-#      - ArqivaTest
-#    healthcheck:
-#      test: ["CMD", "curl", "http://localhost:8080"]
-#      interval: 10s
-#      retries: 3
-#    volumes:
-#      - shared-data:/app/imports  # Mount named volume at /app/imports
-#    user: "appuser:appgroup"
-#    mem_limit: 4g
-#    cpus: 1.0
-#
-#  spark-worker:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile.apache
-#    container_name: spark-worker
-#    depends_on:
-#      - spark-master
-#    environment:
-#      - SPARK_MODE=worker
-#      - SPARK_MASTER=spark://spark-master:7077
-#      - SPARK_WORKER_CORES=1
-#      - SPARK_WORKER_MEMORY=4g
-#    networks:
-#      - ArqivaTest
-#    ports:
-#      - "8081:8081"  # Spark Worker UI
-#      - "4040:4040"
-#    healthcheck:
-#      test: ["CMD", "curl", "http://localhost:8081"]
-#      interval: 10s
-#      retries: 3
-#    volumes:
-#      - shared-data:/app/imports  # Mount named volume at /app/imports
-#    user: "appuser:appgroup"
-#    mem_limit: 4g
-#    cpus: 1.0
-#
-#  app:
-#    container_name: app
-#    build:
-#      context: .
-#      dockerfile: Dockerfile.app
-#    command: python main.py --watch 'imports'
-#    restart: always
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#      spark-master:
-#        condition: service_healthy
-#      spark-worker:
-#        condition: service_healthy
-#    networks:
-#      - ArqivaTest
-#    volumes:
-#      - shared-data:/app/imports  # Mount named volume at /app/imports
-#    user: "appuser:appgroup"
+  spark-master:
+    build:
+      context: .
+      dockerfile: Dockerfile.apache
+    container_name: spark-master
+    ports:
+      - "8080:8080"  # Spark Master UI
+      - "7077:7077"  # Spark Master Port
+      - "4040:4040"
+    environment:
+      - SPARK_MODE=master
+    networks:
+      - ArqivaTest
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:8080"]
+      interval: 10s
+      retries: 3
+    volumes:
+      - shared-data:/app/imports  # Mount named volume at /app/imports
+    user: "appuser:appgroup"
+    mem_limit: 4g
+    cpus: 1.0
+
+  spark-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.apache
+    container_name: spark-worker
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=4g
+    networks:
+      - ArqivaTest
+    ports:
+      - "8081:8081"  # Spark Worker UI
+      - "4040:4040"
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:8081"]
+      interval: 10s
+      retries: 3
+    volumes:
+      - shared-data:/app/imports  # Mount named volume at /app/imports
+    user: "appuser:appgroup"
+    mem_limit: 4g
+    cpus: 1.0
+
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    command: python main.py --watch 'imports'
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      spark-master:
+        condition: service_healthy
+      spark-worker:
+        condition: service_healthy
+    networks:
+      - ArqivaTest
+    volumes:
+      - shared-data:/app/imports  # Mount named volume at /app/imports
+    user: "appuser:appgroup"
 
 networks:
     ArqivaTest:
