@@ -1,9 +1,8 @@
 import datetime as dt
-from datetime import datetime
-import uuid
 from dataclasses import dataclass
+from datetime import datetime
 
-from sqlalchemy import Column, UUID, ForeignKey, Float, Date, Integer, DateTime
+from sqlalchemy import Column, ForeignKey, Float, Integer, DateTime, String
 from sqlalchemy.orm import relationship
 
 from core.db import Base, settings
@@ -16,8 +15,7 @@ class transaction(Base):
     __table_args__ = {'schema': settings.dw_schema}
 
     id: int = Column(Integer, primary_key=True)
-    user_id: int = Column(Integer, ForeignKey(f'{settings.dw_schema}.users.id'), nullable=False)
-    user = relationship("users", foreign_keys=[user_id])
+    user_id: str = Column(String,  nullable=False)
 
     amount: float = Column(Float, nullable=False)
     transaction_date: dt.datetime = Column(DateTime, nullable=False)

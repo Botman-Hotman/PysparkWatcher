@@ -1,6 +1,8 @@
 import logging
 import os
+
 from pyspark.sql import DataFrame
+
 from core.spark import spark
 
 
@@ -18,8 +20,8 @@ def ingest_csv_files(directory: str) -> None | dict:
         inferSchema=True  # Automatically infer data types
     )
 
-    if df_new.count() > 0:
-        logging.debug(f"{df_new.count()} rows found for {file_name}")
+    if not df_new.isEmpty():
+        logging.info(f"{df_new.count()} rows found for {file_name}")
 
         return {
             "dataframe": df_new,

@@ -1,1 +1,2 @@
-from models import Transactions, Users
+from models.Users import user
+from models.Transactions import transaction

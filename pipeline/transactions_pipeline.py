@@ -1,11 +1,10 @@
 import logging
 
 from pyspark.sql import DataFrame
-from core.spark import spark, spark_settings
-from pyspark.sql.functions import col, current_date, datediff, to_date, current_timestamp
-from pyspark.sql.window import Window
-from pyspark.sql.functions import row_number, lit, when, coalesce, greatest
+from pyspark.sql.functions import col, to_date, current_timestamp
+
 from core.config import settings
+from core.spark import spark, spark_settings
 
 
 def transform_transaction_data(target_data: dict):
