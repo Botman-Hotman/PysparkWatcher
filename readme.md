@@ -100,6 +100,9 @@ Run the commands in order to do the initial insert, naturally we need users to b
 
 $ `docker cp example_data/inserts/users.csv app:app/imports`
 
+![Alt text](img/new_file.png?raw=true "expected start")
+
+
 On the new data entering into the pipeline, the usual duplication and null value checks are performed. A hash of the email address is taken and converted into a UUID as the user_id as a more reliable and anonymous key to pass between systems. 
 The scripts will check if there are any existing records in the database, naturally on the first run there will not so it will create the relevant dimensions and insert the data. 
 
