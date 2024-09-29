@@ -82,8 +82,14 @@ if init_db is True you should also see the following tables have been created in
 ![Alt text](img/tables.png?raw=true "database tables")
 
 
+
 ### check that the containers are up
 $ `docker ps`
+
+### check the logs of the start up, you should see the image below 
+
+$ `docker-compose logs`
+
 
 ![Alt text](img/watcher.png?raw=true "expected start")
 
